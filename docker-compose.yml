@@ -10,7 +10,6 @@ services:
       - .:/var/www/html
       - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     environment:
-      APP_ENV: local
       DATABASE_URL: "mysql://root:root@mysql:3306/blog?serverVersion=8.4&charset=utf8mb4"
       DATABASE_NAME: blog
       DATABASE_HOST: mysql
