@@ -11,6 +11,6 @@ final class DefaultController extends AbstractController
     #[Route('/default/{id}', name: 'app_default', defaults: ['id' => 'index'])]
     public function index(): Response
     {
-      return $this->redirectToRoute('app_blog_index');
+      return new Response();
     }
 }
