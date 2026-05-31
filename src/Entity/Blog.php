@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\PersistentCollection;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: BlogRepository::class)]
@@ -36,11 +37,21 @@ class Blog
     #[JoinColumn(name: 'category_id', referencedColumnName: 'id')]
     private Category|null $category = null;
 
+    #[ManyToOne(targetEntity: User::class)]
+    #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private ?User $user = null;
+
     #[JoinTable(name: 'blog_tags')]
     #[JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     #[InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id')]
     #[ManyToMany(targetEntity: Tag::class, cascade: ['persist'])]
     private ArrayCollection|PersistentCollection $tags;
+
+
+    public function __construct(UserInterface|User $user)
+    {
+        $this->user = $user;
+    }
 
     public function getId(): ?int
     {
@@ -104,5 +115,15 @@ class Blog
     public function addTag(Tag $tag): void
     {
         $this->tags[] = $tag;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): void
+    {
+        $this->user = $user;
     }
 }
