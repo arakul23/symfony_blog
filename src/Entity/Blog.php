@@ -37,7 +37,7 @@ class Blog
     #[JoinColumn(name: 'category_id', referencedColumnName: 'id')]
     private Category|null $category = null;
 
-    #[ManyToOne(targetEntity: User::class)]
+    #[ManyToOne(targetEntity: User::class, fetch: 'EAGER')]
     #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $user = null;
 
@@ -46,6 +46,9 @@ class Blog
     #[InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id')]
     #[ManyToMany(targetEntity: Tag::class, cascade: ['persist'])]
     private ArrayCollection|PersistentCollection $tags;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?string $percent = null;
 
 
     public function __construct(UserInterface|User $user)
@@ -87,9 +90,11 @@ class Blog
         return $this->description;
     }
 
-    public function setDescription(?string $description): void
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
+
+        return $this;
     }
 
     public function getCategory(): ?Category
@@ -125,5 +130,15 @@ class Blog
     public function setUser(?User $user): void
     {
         $this->user = $user;
+    }
+
+    public function getPercent(): ?string
+    {
+        return $this->percent;
+    }
+
+    public function setPercent(?string $percent): void
+    {
+        $this->percent = $percent;
     }
 }
