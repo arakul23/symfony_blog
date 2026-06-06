@@ -6,6 +6,7 @@ use App\Entity\Blog;
 use App\Filter\BlogFilter;
 use App\Form\BlogFilterType;
 use App\Form\BlogType;
+use App\Message\ContentWatchJob;
 use App\Repository\BlogRepository;
 use App\Service\ContentWatchApi;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -40,7 +42,7 @@ final class BlogController extends AbstractController
     }
 
     #[Route('/new', name: 'app_user_blog_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, ContentWatchApi $contentWatchApi): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ContentWatchApi $contentWatchApi, MessageBusInterface $messageBus): Response
     {
         $blog = new Blog($this->getUser());
         $form = $this->createForm(BlogType::class, $blog);
@@ -49,10 +51,7 @@ final class BlogController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($blog);
             $entityManager->flush();
-
-            $blog->setPercent($contentWatchApi->checkText($blog->getText()));
-
-            $entityManager->flush();
+            $messageBus->dispatch(new ContentWatchJob($blog->getId()));
 
             return $this->redirectToRoute('app_blog_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -93,7 +92,7 @@ final class BlogController extends AbstractController
     #[Route('/{id}', name: 'app_user_blog_delete', methods: ['POST'])]
     public function delete(Request $request, Blog $blog, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$blog->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $blog->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($blog);
             $entityManager->flush();
         }
