@@ -48,7 +48,7 @@ class Blog
     private ArrayCollection|PersistentCollection $tags;
 
     #[ORM\Column(type: Types::SMALLINT)]
-    private ?string $percent = null;
+    private ?int $percent = null;
 
 
     public function __construct(UserInterface|User $user)
@@ -137,7 +137,7 @@ class Blog
         return $this->percent;
     }
 
-    public function setPercent(?string $percent): void
+    public function setPercent(?int $percent): void
     {
         $this->percent = $percent;
     }
