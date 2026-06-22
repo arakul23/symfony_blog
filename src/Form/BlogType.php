@@ -9,6 +9,7 @@ use App\Form\DataTransformer\TagTransformer;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -28,11 +29,9 @@ class BlogType extends AbstractType
             ])
             ->add('description', TextareaType::class)
             ->add('text')
-
             ->add('tags', TextType::class, [
                 'required' => false,
-            ])
-        ;
+            ]);
 
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder->add('category', EntityType::class, [
@@ -46,6 +45,14 @@ class BlogType extends AbstractType
                     'placeholder' => 'Select user',
                 ]);
         }
+
+        $builder->add('status', ChoiceType::class, [
+            'choices' => [
+                'publish' => 'Publish',
+                'pending' => 'Pending',
+                'blocked' => 'Blocked',
+            ]
+        ]);
 
         $builder->get('tags')
             ->addModelTransformer($this->tagTransformer);

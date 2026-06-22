@@ -12,12 +12,16 @@ use Doctrine\ORM\Mapping\JoinTable;
 use Doctrine\ORM\Mapping\ManyToMany;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\PersistentCollection;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: BlogRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Blog
 {
+    use TimestampableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -41,6 +45,13 @@ class Blog
     #[JoinColumn(name: 'user_id', referencedColumnName: 'id')]
     private ?User $user = null;
 
+    #[ORM\Column(type: Types::STRING, length: 255)]
+    #[NotBlank]
+    private ?string $status = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTime $blockedAt = null;
+
     #[JoinTable(name: 'blog_tags')]
     #[JoinColumn(name: 'blog_id', referencedColumnName: 'id')]
     #[InverseJoinColumn(name: 'tag_id', referencedColumnName: 'id')]
@@ -54,6 +65,14 @@ class Blog
     public function __construct(UserInterface|User $user)
     {
         $this->user = $user;
+    }
+
+
+    public function setBlockedAtValue(): void
+    {
+        if ($this->status === 'Blocked' && !$this->blockedAt) {
+            $this->blockedAt = new \DateTime();
+        }
     }
 
     public function getId(): ?int
@@ -140,5 +159,25 @@ class Blog
     public function setPercent(?int $percent): void
     {
         $this->percent = $percent;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): void
+    {
+        $this->status = $status;
+    }
+
+    public function getBlockedAt(): ?\DateTime
+    {
+        return $this->blockedAt;
+    }
+
+    public function setBlockedAt(?\DateTime $blockedAt): void
+    {
+        $this->blockedAt = $blockedAt;
     }
 }

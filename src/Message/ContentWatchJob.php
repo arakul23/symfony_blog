@@ -7,11 +7,11 @@ namespace App\Message;
 class ContentWatchJob
 {
     public function __construct(
-        private string $content,
+        private int $content,
     ) {
     }
 
-    public function getContent(): string
+    public function getContent(): int
     {
         return $this->content;
     }

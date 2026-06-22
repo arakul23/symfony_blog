@@ -20,7 +20,7 @@ class BlogRepository extends ServiceEntityRepository
 
     public function getBlogs(): array
     {
-        return $this->createQueryBuilder('b')->getQuery()->setMaxResults(6)->getResult();
+        return $this->createQueryBuilder('b')->orderBy('b.id', 'DESC')->getQuery()->setMaxResults(6)->getResult();
     }
 
     public function findByBlogFilter(BlogFilter $filter)
@@ -38,5 +38,10 @@ class BlogRepository extends ServiceEntityRepository
         }
 
         return $query;
+    }
+
+    public function getByTitle(string $title): ?Blog
+    {
+        return $this->findOneBy(['title' => $title]);
     }
 }

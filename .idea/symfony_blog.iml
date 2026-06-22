@@ -133,6 +133,11 @@
       <excludeFolder url="file://$MODULE_DIR$/var/cache" />
       <excludeFolder url="file://$MODULE_DIR$/var" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfonycasts/verify-email-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/fakerphp/faker" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/gedmo/doctrine-extensions" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/stof/doctrine-extensions-bundle" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/zenstruck/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/zenstruck/foundry" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
